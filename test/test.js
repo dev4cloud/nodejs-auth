@@ -1,3 +1,7 @@
+/**
+ * test/test.js
+ * All endpoint tests for the auth API
+ */
 
 const chai = require('chai');
 const expect = chai.expect;
@@ -8,7 +12,22 @@ const app = require('../app')
 const http = require('chai-http');
 chai.use(http);
 
+//import User model
+const User = require('../api/user')
+
+
 describe('App basic tests', () => {
+  
+  before( (done) => {
+    //delete all users 
+    User.find().deleteMany().then( res => {
+      console.log('Users removed');
+      done();
+    }).catch(err => {
+      console.log(err.message);
+    });
+  });
+
   it('Should exists', () => {
     expect(app).to.be.a('function');
   })
@@ -42,7 +61,11 @@ describe('User registration', () => {
     chai.request(app).post('/register').send(user_input).then(res => {
       //validate
       expect(res).to.have.status(201);
-      expect(res.body.message).to.be.equal('User registered')
+      expect(res.body.message).to.be.equal('User registered');
+      console.log(res.body.user);
+      //new validations to confirm user is saved in database
+      expect(res.body.user._id).to.exist;
+      expect(res.body.user.createdAt).to.exist;
 
       //done after all assertions pass
       done();
@@ -85,7 +108,6 @@ describe('User login', () => {
     chai.request(app).post('/login')
       .send(valid_input)
         .then((res) => {
-          console.log(res.body);
           //assertions
           expect(res).to.have.status(200);
           expect(res.body.token).to.exist;
@@ -96,5 +118,13 @@ describe('User login', () => {
           console.log(err.message);
         })
   });
+
+  after((done) => {
+    //stop app server
+    console.log('All tests completed, stopping server....')
+    process.exit();
+    done();
+  });
 });
+
 
