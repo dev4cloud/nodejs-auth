@@ -5,8 +5,8 @@
 
 module.exports = {
   APP_PORT: "1337",
-  DB_HOST: "YOUR_MONGO_HOST/DATABASE",
-  DB_USER: "MONGO_USER",
-  DB_PASS: "MONGO_PASS",
+  DB_HOST: "127.0.0.1:27017/authSys",
+  DB_USER: "authSys",
+  DB_PASS: "secret",
   JWT_KEY: "thisIsMyJwtKeyUsedToEncodeTheTokens"
 }

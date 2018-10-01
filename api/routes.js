@@ -17,6 +17,10 @@ const User = require('./user');
 //to encrypt
 const bcrypt = require('bcrypt');
 
+//import check-auth middleware
+const checkAuth = require('./middleware/check-auth');
+
+
 router.post('/register', (req, res, next) => {
   let hasErrors = false ;
   let errors = [];
@@ -153,5 +157,13 @@ router.post('/login', (req, res, next) => {
   
   }
 });
+
+router.get('/protected', checkAuth, (req, res, next)=> {
+  res.status(200).json({
+    message: 'Welcome, your email is ' + req.userData.email,
+    user: req.userData,
+    errors: [],
+  })
+})
 
 module.exports = router;
