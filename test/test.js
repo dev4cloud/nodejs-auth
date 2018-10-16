@@ -15,7 +15,6 @@ chai.use(http);
 //import User model
 const User = require('../api/user')
 
-
 describe('App basic tests', () => {
   
   before( (done) => {
@@ -44,13 +43,18 @@ describe('App basic tests', () => {
     }).catch(err => {
       console.log(err);
     });
-    
-
   })
+  
+  it('Returns 404 error for non defined routes', (done) => {
+    chai.request(app).get('/unexisting').then((res) => {
+      expect(res).to.have.status(404);
+      done();
+    });
+  });
 })
 
 describe('User registration', () => {
-  it('/register should return 201 and confirmation for valid input', (done) => {
+  it('should return 201 and confirmation for valid input', (done) => {
     //mock valid user input
     let user_input = {
       "name": "John Wick",
@@ -62,7 +66,6 @@ describe('User registration', () => {
       //validate
       expect(res).to.have.status(201);
       expect(res.body.message).to.be.equal('User registered');
-      console.log(res.body.user);
       //new validations to confirm user is saved in database
       expect(res.body.user._id).to.exist;
       expect(res.body.user.createdAt).to.exist;
@@ -76,7 +79,7 @@ describe('User registration', () => {
     });
   })
 
-  it('/register should return 401 for invalid input', (done) => {
+  it('should return 401 for invalid input', (done) => {
     //mock invalid user input
     let user_invalid_input = {
       "name": "John Wick",
@@ -94,12 +97,97 @@ describe('User registration', () => {
     }).catch(err => {
       console.log(err);
     });
+  });
+
+  it('Should return error 422 when email already registered', (done) => {
+    //user that already exists (added in previous test)
+    const new_user = {
+      "name"  : "John Wick",
+      "email": "john@wick.com",
+      "password": "secret"
+    }
+    //send request to the app
+    chai.request(app).post('/register')
+    .send(new_user)
+      .then((res) => {
+        //console.log(res.body);
+        //assertions
+        expect(res).to.have.status(422);
+        expect(res.body.message).to.be.equal("Invalid email");
+        expect(res.body.errors.length).to.be.equal(1);
+        done();
+    }).catch(err => {
+      console.log(err.message);
+    });
+  });
+
+  it('Should save password encrypted', (done) => {
+    //mock valid user input
+    const new_user = {
+      "name"  : "John Wick",
+      "email": "john2@wick.com",
+      "password": "secret"
+    }
+    //send request to the app
+    chai.request(app).post('/register')
+      .send(new_user)
+        .then((res) => {
+          //console.log(res.body);
+          //assertions
+          
+          expect(res.body.password).to.not.be.equal("secret");
+          done();
+        }).catch(err => {
+          console.log(err.message);
+        })
   })
+
   
 
 })
 
 describe('User login', () => {
+  it('should return error 422 for empty password', (done) => {
+    //mock invalid user input
+    const wrong_input = {
+      "email": "notvalidmail",
+      "password": ""
+    }
+    //send request to the app
+    chai.request(app).post('/login')
+      .send(wrong_input)
+        .then((res) => {
+          //console.log(res.body);
+          //assertions
+          expect(res).to.have.status(422);
+          expect(res.body.message).to.be.equal("Invalid input");
+          expect(res.body.errors.length).to.be.equal(1);
+          done();
+        }).catch(err => {
+          console.log(err.message);
+        })
+  }); 
+
+  it('should return error 401 for invalid credentials', (done) => {
+    //mock invalid user input
+    const wrong_input = {
+      "email": "john@wick.com",
+      "password": "invalidPassword"
+    }
+    //send request to the app
+    chai.request(app).post('/login')
+      .send(wrong_input)
+        .then((res) => {
+          //console.log(res.body);
+          //assertions
+          expect(res).to.have.status(401);
+          expect(res.body.message).to.be.equal("Auth error");
+          done();
+        }).catch(err => {
+          console.log(err.message);
+        })
+  }); 
+
   it('should return 200 and token for valid credentials', (done) => {
     //mock invalid user input
     const valid_input = {
@@ -123,7 +211,18 @@ describe('User login', () => {
 });
 
 describe('Protected route', () => {
-
+  it('should return error 401 if no valid token provided', (done) => {
+    //sed request with no token
+    chai.request(app).get('/protected')
+      .set('Authorization', '')
+      .then(res => {
+        expect(res).to.have.status(401);
+        expect(res.body.message).to.be.equal('Auth failed');
+        done();
+      }).catch(err => {
+        console.log(err.message);
+      });
+  })
   it('should return 200 and user details if valid token provided', (done) => {
     //mock login to get token
     const valid_input = {
