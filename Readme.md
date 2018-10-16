@@ -1,4 +1,4 @@
-## JavaScript Auth System (JWT)
+## AuthSysJS
 This is a basic authentication system built with Express. It stores users in a Mongo database and generates JWT tokens upon login. There is a check-auth middleware that can be added to any route you want to protect from non logged users.
 
 ## Requirements

@@ -3,9 +3,6 @@
  * exports an Express app as a function
  */
 
-
-
-
 const express = require('express');
 const app = express();
 
@@ -40,8 +37,6 @@ app.get('/', (req, res) => {
     message: 'Hello!'
   })
 })
-
-
 
 //import router with endpoints definitions
 const routes = require('./api/routes');
