@@ -1,16 +1,18 @@
 ## AuthSysJS
-This is a basic authentication system built with Express. It stores users in a Mongo database and generates JWT tokens upon login. There is a check-auth middleware that can be added to any route you want to protect from non logged users.
+This is a scafolded express application with a basic authentication system built in. It stores users in a Mongo database and generates JWT tokens upon login. There is a check-auth middleware that can be added to any route you want to protect from non logged users.
 
 ## Requirements
-You need Node and NPM. 
-Mongo DB
+Node and NPM. 
+Mongo database connection details
 
 ## Installation and run
 Install all dependencies with
 ```
 npm install
 ```
-Configure you Mongo DB connection in nodemon.json and test/config.js
+Configure you Mongo DB connection in config/*.js
+
+Configure
 
 Check all tests pass with
 ```
