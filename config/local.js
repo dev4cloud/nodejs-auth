@@ -4,9 +4,9 @@
  */
 
 module.exports = {
-  APP_PORT: "1337",
-  DB_HOST: "127.0.0.1:27017/authSys",
-  DB_USER: "authSys",
-  DB_PASS: "secret",
-  JWT_KEY: "thisIsMyJwtKeyUsedToEncodeTheTokens"
+  APP_PORT: "",
+  DB_HOST: "",
+  DB_USER: "",
+  DB_PASS: "",
+  JWT_KEY: ""
 }
