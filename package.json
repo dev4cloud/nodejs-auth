@@ -4,7 +4,8 @@
   "description": "Auth and login system built with Express. Tests with Mocha and Chai",
   "main": "app.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "start": "node app.js"
   },
   "keywords": [
     "auth",
